@@ -1,4 +1,4 @@
-# RetrofitRxUtil [![RetrofitRxUtil](https://jitpack.io/v/DonaldDu/RetrofitRxUtil.svg)](https://jitpack.io/#DonaldDu/RetrofitRxUtil)
+# RetrofitRxUtil [![](https://jitpack.io/v/SugarAndroid/RetrofitRxUtil.svg)](https://jitpack.io/#SugarAndroid/RetrofitRxUtil)
 
 App Demo
 ```
