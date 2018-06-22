@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/DonaldDu/RetrofitRxUtil.svg)](https://jitpack.io/#DonaldDu/RetrofitRxUtil)
+
 App Demo
 ```
 public class App extends Application {
