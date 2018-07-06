@@ -9,7 +9,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        disposableHandler = new SimpleDisposableHandler();
+        disposableHandler = new DisposableHandler();
         ObserverWithBZ.setDefaultStyledProgressGenerator(new SampleStyledProgressGenerator());
         ObserverWithBZ.setDefaultErrorHandler(new SampleErrorHandler());
     }
