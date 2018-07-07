@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.NetworkOnMainThreadException;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,11 +18,11 @@ public class SampleErrorHandler implements IErrorHandler {
     @Override
     public void onError(ObserverWithBZ observer, Throwable e) {
         observer.dismissProgress();
+        IError error = parseError(e);
         final Context context = observer.getContext();
         if (context instanceof Activity) {
-            String msg = e.getMessage();
-            Dialog dialog = showDialog(context, msg);
-            if (isAuthorizeFailed(context, getErrorCode(e))) {
+            Dialog dialog = showDialog(context, error.getMessage());
+            if (isAuthorizeFailed(context, error.getCode())) {
                 dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
@@ -29,7 +31,7 @@ public class SampleErrorHandler implements IErrorHandler {
                 });
             }
         } else {
-            String msg = "Error Message: " + e.getMessage();
+            String msg = error.getMessage();
             if (context != null) {
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
             } else {
@@ -47,13 +49,25 @@ public class SampleErrorHandler implements IErrorHandler {
 
     }
 
+    @NonNull
     @Override
-    public int getErrorCode(Throwable e) {
+    public IError parseError(Throwable e) {
+        Error error = new Error();
         if (e instanceof ThrowableBZ) {
-            return ((ThrowableBZ) e).status.getCode();
+            ThrowableBZ bz = (ThrowableBZ) e;
+            return bz.status;
         } else if (e instanceof HttpException) {
-            return ((HttpException) e).code();
-        } else return -1;
+            error.code = ((HttpException) e).code();
+            error.message = "HTTP " + error.code;
+        } else {
+            error.code = -1;
+            String msg = e.getMessage();
+            if (msg == null || msg.length() == 0) {
+                msg = e.getClass().getName();
+            }
+            error.message = msg;
+        }
+        return error;
     }
 
     private static final int AUTHORIZE_FAILED = 9001;
@@ -68,5 +82,20 @@ public class SampleErrorHandler implements IErrorHandler {
         String msg = "onLogout";
         if (context != null) Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
         Log.i(TAG, msg);
+    }
+
+    private static class Error implements IError {
+        int code;
+        String message;
+
+        @Override
+        public int getCode() {
+            return code;
+        }
+
+        @Override
+        public String getMessage() {
+            return message;
+        }
     }
 }

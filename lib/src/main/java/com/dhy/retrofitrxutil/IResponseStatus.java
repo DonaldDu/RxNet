@@ -1,11 +1,7 @@
 package com.dhy.retrofitrxutil;
 
-public interface IResponseStatus {
+public interface IResponseStatus extends IError {
     int LOCALL_ERROR = -1;
-
-    int getCode();
-
-    String getMessage();
 
     String getDebugMessage();
 
