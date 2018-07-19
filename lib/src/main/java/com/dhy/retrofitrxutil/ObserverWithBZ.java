@@ -69,9 +69,13 @@ public abstract class ObserverWithBZ<T> implements Observer<T> {
             if (status.isSuccess()) {
                 onResponse(t);
             } else {
-                onError(new ThrowableBZ(status));
+                onFailed(status);
             }
         } else onResponse(t);
+    }
+
+    protected void onFailed(@NonNull IResponseStatus status) {
+        onError(new ThrowableBZ(status));
     }
 
     /**
