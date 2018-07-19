@@ -3,13 +3,17 @@
 App Demo
 ```
 public class App extends Application {
-    public static API api;
-    public IDisposableHandler disposableHandler;
 
+    public IDisposableHandler disposableHandler;
+    
+    public static App getInstance(Context context) {
+        return (App) context.getApplicationContext();
+    }
+    
     @Override
     public void onCreate() {
         super.onCreate();
-        disposableHandler = new SimpleDisposableHandler();
+        disposableHandler = new DisposableHandler();
         ObserverWithBZ.setDefaultStyledProgressGenerator(new SampleStyledProgressGenerator());
         ObserverWithBZ.setDefaultErrorHandler(new SampleErrorHandler());
     }
