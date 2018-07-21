@@ -5,7 +5,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 public interface IErrorHandler {
-    void onError(ObserverWithBZ observer, Throwable e);
+    void onError(IObserverX observer, Throwable e);
 
     Dialog showDialog(Context context, String msg);
 

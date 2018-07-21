@@ -11,7 +11,7 @@ import io.reactivex.disposables.Disposable;
  * user {@link ObserverX} for short name of {@link ObserverWithBZ}
  */
 @Deprecated
-public abstract class ObserverWithBZ<T> implements Observer<T> {
+public abstract class ObserverWithBZ<T> implements Observer<T>, IObserverX {
     private static IErrorHandler defaultErrorHandler;
     private static StyledProgressGenerator defaultStyledProgressGenerator;
 

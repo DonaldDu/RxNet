@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 public class SampleStyledProgressGenerator implements StyledProgressGenerator {
     @Override
-    public StyledProgress generate(final ObserverWithBZ observer) {
+    public StyledProgress generate(final IObserverX observer) {
         return new StyledProgress() {
             final Context context = observer.getContext();
 

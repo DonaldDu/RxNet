@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.dhy.retrofitrxutil.ObserverWithBZ
+import com.dhy.retrofitrxutil.ObserverX
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
@@ -46,7 +46,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 api.simple()
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(object : ObserverWithBZ<ResponsePacket<String>>(context) {
+                        .subscribe(object : ObserverX<ResponsePacket<String>>(context) {
                             override fun onResponse(response: ResponsePacket<String>) {
                                 Toast.makeText(context, "response:" + response.message, Toast.LENGTH_SHORT).show()
                             }
@@ -56,7 +56,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 api.netError()
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(object : ObserverWithBZ<ResponsePacket<String>>(context) {
+                        .subscribe(object : ObserverX<ResponsePacket<String>>(context) {
                             override fun onResponse(response: ResponsePacket<String>) {
                                 Toast.makeText(context, "response:" + response.message, Toast.LENGTH_SHORT).show()
                             }
@@ -66,7 +66,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 api.bzError()
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(object : ObserverWithBZ<ResponsePacket<String>>(context) {
+                        .subscribe(object : ObserverX<ResponsePacket<String>>(context) {
                             override fun onResponse(response: ResponsePacket<String>) {
                                 Toast.makeText(context, "response:" + response.message, Toast.LENGTH_SHORT).show()
                             }
@@ -76,7 +76,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 api.authorizeFailed()
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(object : ObserverWithBZ<ResponsePacket<String>>(context) {
+                        .subscribe(object : ObserverX<ResponsePacket<String>>(context) {
                             override fun onResponse(response: ResponsePacket<String>) {
                                 Toast.makeText(context, "response:" + response.message, Toast.LENGTH_SHORT).show()
                             }

@@ -1,5 +1,5 @@
 package com.dhy.retrofitrxutil;
 
 public interface StyledProgressGenerator {
-    StyledProgress generate(ObserverWithBZ observer);
+    StyledProgress generate(IObserverX observer);
 }
