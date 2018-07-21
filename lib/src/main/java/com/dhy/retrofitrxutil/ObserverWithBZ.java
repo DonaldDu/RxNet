@@ -7,6 +7,10 @@ import android.support.annotation.Nullable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
+/**
+ * user {@link ObserverX} for short name of {@link ObserverWithBZ}
+ */
+@Deprecated
 public abstract class ObserverWithBZ<T> implements Observer<T> {
     private static IErrorHandler defaultErrorHandler;
     private static StyledProgressGenerator defaultStyledProgressGenerator;
@@ -19,20 +23,20 @@ public abstract class ObserverWithBZ<T> implements Observer<T> {
         ObserverWithBZ.defaultStyledProgressGenerator = defaultStyledProgressGenerator;
     }
 
-    @Nullable
+    @NonNull
     private Context context;
     protected StyledProgress styledProgress;
     protected final boolean successOnly, autoDismiss;
     private Disposable disposable;
 
-    public ObserverWithBZ(@Nullable Context context) {
+    public ObserverWithBZ(@NonNull Context context) {
         this(context, true, true);
     }
 
     /**
      * @param autoDismiss autoDismissProgress
      */
-    public ObserverWithBZ(@Nullable Context context, boolean successOnly, boolean autoDismiss) {
+    public ObserverWithBZ(@NonNull Context context, boolean successOnly, boolean autoDismiss) {
         this.context = context;
         this.successOnly = successOnly;
         this.autoDismiss = autoDismiss;
@@ -40,13 +44,15 @@ public abstract class ObserverWithBZ<T> implements Observer<T> {
         if (styledProgress == null) styledProgress = StyledProgressOfNone.getInstance();
     }
 
-    @Nullable
+    @NonNull
     public Context getContext() {
         return context;
     }
 
     /**
      * Override this for custom progress
+     *
+     * @return null for StyledProgressOfNone
      */
     @Nullable
     protected StyledProgress getStyledProgress() {

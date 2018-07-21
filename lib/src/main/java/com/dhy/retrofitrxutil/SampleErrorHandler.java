@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.NetworkOnMainThreadException;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
@@ -32,11 +31,7 @@ public class SampleErrorHandler implements IErrorHandler {
             }
         } else {
             String msg = error.getMessage();
-            if (context != null) {
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-            } else {
-                Log.i(TAG, msg);
-            }
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }

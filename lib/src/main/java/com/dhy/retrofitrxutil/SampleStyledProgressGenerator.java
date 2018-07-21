@@ -42,7 +42,7 @@ public class SampleStyledProgressGenerator implements StyledProgressGenerator {
                     } else if (dialog.isShowing()) {
                         dialog.dismiss();
                     }
-                } else if (context != null) {
+                } else {
                     if (toast == null) {
                         toast = Toast.makeText(context, "", Toast.LENGTH_SHORT);
                     }
