@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
@@ -12,30 +13,42 @@ import retrofit2.HttpException;
 public abstract class BaseErrorHandler implements IErrorHandler {
 
     @Override
-    public void onError(IObserverX observer, Throwable e) {
+    public void onError(@NonNull IObserverX observer, @NonNull Throwable e) {
         observer.dismissProgress();
         IError error = parseError(e);
         final Context context = observer.getContext();
         if (context instanceof Activity) {
-            Dialog dialog = showDialog(context, error.getMessage());
-            if (isAuthorizeFailed(context, error.getCode())) {
-                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        onLogout(context);
-                    }
-                });
-            }
+            onActivityError((Activity) context, error);
         } else {
+            onBackgroundError(context, error, e);
+        }
+    }
+
+    @Override
+    public void onActivityError(@NonNull final Activity activity, @NonNull IError error) {
+        Dialog dialog = showDialog(activity, error.getMessage());
+        if (isAuthorizeFailed(activity, error.getCode())) {
+            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    onLogout(activity);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onBackgroundError(@NonNull Context context, @NonNull IError error, @NonNull Throwable e) {
+        if (Looper.myLooper() != null) {
             String msg = error.getMessage();
             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
         }
+        e.printStackTrace();
     }
 
     @NonNull
     @Override
-    public IError parseError(Throwable e) {
+    public IError parseError(@NonNull Throwable e) {
         int code;
         String message;
         if (e instanceof ThrowableBZ) {
