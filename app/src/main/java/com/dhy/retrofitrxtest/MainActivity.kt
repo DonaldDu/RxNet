@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.dhy.retrofitrxutil.ObserverX
+import com.dhy.retrofitrxutil.subscribeX
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
@@ -38,6 +39,15 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 .baseUrl("https://www.demo.com/")
                 .build()
         api = retrofit.create(API::class.java)
+    }
+
+    private fun subscribeX() {
+        api.simple()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(context) {
+                    Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
+                }
     }
 
     override fun onClick(v: View) {

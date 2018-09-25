@@ -14,8 +14,9 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         disposableHandler = new DisposableHandler();
-        ObserverWithBZ.setDefaultStyledProgressGenerator(new SampleStyledProgressGenerator());
-        ObserverWithBZ.setDefaultErrorHandler(new SampleErrorHandler());
+        StatusResponse.debug = BuildConfig.DEBUG;
+        ObserverX.setDefaultStyledProgressGenerator(new SampleStyledProgressGenerator());
+        ObserverX.setDefaultErrorHandler(new SampleErrorHandler());
     }
 }
 ```
@@ -50,7 +51,14 @@ public abstract class BaseActivity extends AppCompatActivity implements IDisposa
 ```
 
 MainActivity中带默认错误处理和进度框的调用
-```
+```    
+    api.simple()
+               .subscribeOn(Schedulers.newThread())
+               .observeOn(AndroidSchedulers.mainThread())
+               .subscribeX(context) {//Kotlin only
+                   Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
+               }  
+               
     api.simple()
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
@@ -58,7 +66,7 @@ MainActivity中带默认错误处理和进度框的调用
                 override fun onResponse(ResponsePacket<String> response) {
                     Toast.makeText(context, "response:" + response.message, Toast.LENGTH_SHORT).show()
                 }
-            });
+            });                    
 ```
 
 ObserverWithBZ中常用方法说明
