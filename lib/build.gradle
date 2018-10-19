@@ -2,17 +2,14 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.novoda.bintray-release'
 
-
 android {
     compileSdkVersion 27
-
     defaultConfig {
         minSdkVersion 14
         //noinspection OldTargetApi
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0.8"
-
+        versionName "1.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "boolean", "INCLUDE_PROGUARD", "true"
     }
