@@ -30,9 +30,12 @@ class ObserverXBuilder<T>(private val context: Context, private val observable: 
         return this
     }
 
-    fun response(response: (T) -> Unit): ObserverXBuilder<T> {
+    /**
+     * set response clouser and build to start request
+     * */
+    fun response(response: (T) -> Unit) {
         this.response = response
-        return this
+        build()
     }
 
     fun build() {

@@ -7,7 +7,6 @@ fun <T : Any> Observable<T>.subscribeX(context: Context, autoDismiss: Boolean = 
     ObserverXBuilder(context, this)
             .autoDismiss(autoDismiss)
             .response(response)
-            .build()
 }
 
 fun <T : Any> Observable<T>.subscribeXBuilder(context: Context): ObserverXBuilder<T> {
