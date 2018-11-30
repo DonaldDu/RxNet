@@ -45,16 +45,22 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         api.simple()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(context) {
-                    Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
-                }
+                .subscribe(object : ObserverX<ResponsePacket<String>>(context) {
+                    override fun onResponse(response: ResponsePacket<String>) {
+                        Toast.makeText(context, "response:" + response.message, Toast.LENGTH_SHORT).show()
+                    }
+                })
+
+        api.simple().subscribeX(context) {
+            Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onClick(v: View) {
         when (v.id) {
             R.id.buttonOK ->
                 api.simple()
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(object : ObserverX<ResponsePacket<String>>(context) {
                             override fun onResponse(response: ResponsePacket<String>) {
@@ -64,7 +70,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 
             R.id.buttonNetError ->
                 api.netError()
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(object : ObserverX<ResponsePacket<String>>(context) {
                             override fun onResponse(response: ResponsePacket<String>) {
@@ -74,7 +80,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 
             R.id.buttonBzError ->
                 api.bzError()
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(object : ObserverX<ResponsePacket<String>>(context) {
                             override fun onResponse(response: ResponsePacket<String>) {
@@ -84,7 +90,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 
             R.id.buttonAuthorizeFailed ->
                 api.authorizeFailed()
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(object : ObserverX<ResponsePacket<String>>(context) {
                             override fun onResponse(response: ResponsePacket<String>) {

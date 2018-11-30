@@ -5,11 +5,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.dhy.retrofitrxutil.IDisposable;
 import com.dhy.retrofitrxutil.IDisposableHandler;
+import com.dhy.retrofitrxutil.ObserverX;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.ObservableTransformer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public abstract class BaseActivity extends AppCompatActivity implements IDisposable {
     private IDisposableHandler disposableHandler;
@@ -34,5 +41,45 @@ public abstract class BaseActivity extends AppCompatActivity implements IDisposa
     protected void onDestroy() {
         super.onDestroy();
         disposableHandler.onDestroy(this);
+    }
+
+    void test(API api, final Context context) {
+        api.simple()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ObserverX<ResponsePacket<String>>(context) {
+                    protected void onResponse(ResponsePacket<String> response) {
+                        Toast.makeText(context, "response:" + response.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        subscribeAndroid(api.simple())
+                .subscribe(new ObserverX<ResponsePacket<String>>(context) {
+                    protected void onResponse(ResponsePacket<String> response) {
+                        Toast.makeText(context, "response:" + response.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        api.simple().compose(BaseActivity.<ResponsePacket<String>>composeAndroid())
+                .subscribe(new ObserverX<ResponsePacket<String>>(context) {
+                    protected void onResponse(ResponsePacket<String> response) {
+                        Toast.makeText(context, "response:" + response.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    static <T> Observable<T> subscribeAndroid(Observable<T> observable) {
+        return observable.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    static <T> ObservableTransformer<T, T> composeAndroid() {
+        return new ObservableTransformer<T, T>() {
+            @Override
+            public ObservableSource<T> apply(Observable<T> upstream) {
+                return upstream.subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+            }
+        };
     }
 }

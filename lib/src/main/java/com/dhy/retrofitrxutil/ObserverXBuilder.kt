@@ -2,6 +2,8 @@ package com.dhy.retrofitrxutil
 
 import android.content.Context
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class ObserverXBuilder<T>(private val context: Context, private val observable: Observable<T>) {
     private var failed: ((IResponseStatus) -> Boolean)? = null
@@ -39,22 +41,24 @@ class ObserverXBuilder<T>(private val context: Context, private val observable: 
     }
 
     fun build() {
-        observable.subscribe(object : ObserverX<T>(context, successOnly, autoDismiss) {
-            override fun onResponse(t: T) {
-                response(t)
-            }
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : ObserverX<T>(context, successOnly, autoDismiss) {
+                    override fun onResponse(t: T) {
+                        response(t)
+                    }
 
-            override fun onFailed(status: IResponseStatus) {
-                if (failed != null) {
-                    val hanle = failed!!(status)
-                    if (!hanle) super.onFailed(status)
-                } else super.onFailed(status)
-            }
+                    override fun onFailed(status: IResponseStatus) {
+                        if (failed != null) {
+                            val hanle = failed!!(status)
+                            if (!hanle) super.onFailed(status)
+                        } else super.onFailed(status)
+                    }
 
-            override fun getStyledProgress(): StyledProgress? {
-                if (progress != null) return progress!!(super.getStyledProgress())
-                return super.getStyledProgress()
-            }
-        })
+                    override fun getStyledProgress(): StyledProgress? {
+                        if (progress != null) return progress!!(super.getStyledProgress())
+                        return super.getStyledProgress()
+                    }
+                })
     }
 }
