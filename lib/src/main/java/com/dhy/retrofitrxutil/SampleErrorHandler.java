@@ -1,5 +1,6 @@
 package com.dhy.retrofitrxutil;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -19,7 +20,7 @@ public class SampleErrorHandler extends BaseErrorHandler {
     }
 
     @Override
-    public boolean isAuthorizeFailed(@NonNull Context context, int errorCode) {
+    public boolean isAuthorizeFailed(@NonNull Activity activity, int errorCode) {
         return errorCode == 9001;
     }
 
@@ -28,5 +29,10 @@ public class SampleErrorHandler extends BaseErrorHandler {
         String msg = "onLogout";
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
         Log.i(TAG, msg);
+    }
+
+    @Override
+    public boolean isDebug() {
+        return true;
     }
 }

@@ -39,11 +39,13 @@ public abstract class BaseErrorHandler implements IErrorHandler {
 
     @Override
     public void onBackgroundError(@NonNull Context context, @NonNull IError error, @NonNull Throwable e) {
-        if (Looper.myLooper() != null) {
-            String msg = error.getMessage();
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+        if (isDebug()) {
+            if (Looper.myLooper() != null) {
+                String msg = error.getMessage();
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+            }
+            e.printStackTrace();
         }
-        e.printStackTrace();
     }
 
     @NonNull

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.dhy.retrofitrxutil.ObserverX
 import com.dhy.retrofitrxutil.subscribeX
+import com.dhy.retrofitrxutil.subscribeXBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
@@ -53,6 +54,9 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 
         api.simple().subscribeX(context) {
             Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
+        }
+        api.simple().subscribeXBuilder(context).response {
+
         }
     }
 
