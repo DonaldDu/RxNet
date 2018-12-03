@@ -30,11 +30,6 @@ public class ResponsePacket<DATA extends Serializable> implements Serializable, 
         return (result != null ? result.message : "");
     }
 
-    @Override
-    public String getDebugMessage() {
-        return "CODE " + getCode() + ": " + (result != null ? result.message : "");
-    }
-
     private Result result;
 
     private static class Result {
