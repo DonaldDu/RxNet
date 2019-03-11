@@ -55,6 +55,19 @@ class ObserverXBuilder<T>(private val context: Context, private val observable: 
                         } else super.onFailed(status)
                     }
 
+                    override fun onError(e: Throwable) {
+                        if (failed != null) {
+                            val error = errorHandler.parseError(e)
+                            val status = object : IResponseStatus {
+                                override fun getCode() = error.code
+                                override fun getMessage() = error.message
+                                override fun isSuccess() = false
+                            }
+                            val hanle = failed!!(status)
+                            if (!hanle) super.onError(e)
+                        } else super.onError(e)
+                    }
+
                     override fun getStyledProgress(): StyledProgress? {
                         if (progress != null) return progress!!(super.getStyledProgress())
                         return super.getStyledProgress()
