@@ -19,6 +19,7 @@ public abstract class ObserverX<T> implements Observer<T>, IObserverX {
         ObserverX.defaultStyledProgressGenerator = defaultStyledProgressGenerator;
     }
 
+    public static boolean forceDismissProgress = true;
     @NonNull
     private Context context;
     protected StyledProgress styledProgress;
@@ -96,7 +97,7 @@ public abstract class ObserverX<T> implements Observer<T>, IObserverX {
     @Override
     public void onComplete() {
         cancel();
-        if (autoDismiss) dismissProgress();
+        if (autoDismiss || forceDismissProgress) dismissProgress();
     }
 
     public void showProgress() {
