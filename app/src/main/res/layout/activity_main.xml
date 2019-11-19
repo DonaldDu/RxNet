@@ -31,4 +31,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="authorize Failed" />
+
+    <Button
+        android:id="@+id/buttonMultReq"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="multiple request" />
 </LinearLayout>
