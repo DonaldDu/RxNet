@@ -9,7 +9,7 @@ android {
         //noinspection OldTargetApi
         targetSdkVersion 27
         versionCode 1
-        versionName "1.1.4"
+        versionName "1.1.4.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "boolean", "INCLUDE_PROGUARD", "true"
     }
@@ -34,7 +34,6 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     api 'io.reactivex.rxjava2:rxandroid:2.1.1'
     api 'com.squareup.retrofit2:retrofit:2.6.2'
-    compileOnly 'com.android.support:appcompat-v7:27.1.1'
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

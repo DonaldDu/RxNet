@@ -23,16 +23,16 @@ abstract class BaseErrorHandler : IErrorHandler {
     }
 
     override fun onActivityError(activity: Activity, error: IError) {
-        val dialog = showDialog(activity, error.message)
-        if (isAuthorizeFailed(activity, error.code)) {
+        val dialog = showDialog(activity, error.getMessage())
+        if (dialog != null && isAuthorizeFailed(activity, error.getCode())) {
             dialog.setOnDismissListener { onLogout(activity) }
         }
     }
 
     override fun onBackgroundError(context: Context, error: IError, e: Throwable) {
-        if (isDebug) {
+        if (isDebug()) {
             if (Looper.myLooper() != null) {
-                val msg = error.message
+                val msg = error.getMessage()
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
             }
             e.printStackTrace()
@@ -41,7 +41,7 @@ abstract class BaseErrorHandler : IErrorHandler {
 
     override fun parseError(e: Throwable): IError {
         val code: Int
-        val message: String?
+        val message: String
         when (e) {
             is ThrowableBZ -> return e.status
             is HttpException -> {
@@ -54,7 +54,7 @@ abstract class BaseErrorHandler : IErrorHandler {
                 if (msg == null || msg.isEmpty()) {
                     msg = e.javaClass.name
                 }
-                message = msg
+                message = msg!!
             }
         }
         return Error(code, message)

@@ -46,18 +46,18 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         api.simple()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : ObserverX<ResponsePacket<String>>(context) {
-                    override fun onResponse(response: ResponsePacket<String>) {
-                        Toast.makeText(context, "response:" + response.message, Toast.LENGTH_SHORT).show()
-                    }
-                })
+                .subscribeX(context) {
+                    Toast.makeText(context, "response:" + it.getMessage(), Toast.LENGTH_SHORT).show()
+                }
+
 
         api.simple().subscribeX(context) {
-            Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "response:" + it.getMessage(), Toast.LENGTH_SHORT).show()
         }
-        api.simple().subscribeXBuilder(context).response {
+        api.simple().subscribeXBuilder(context)
+                .response {
 
-        }
+                }
     }
 
     override fun onClick(v: View) {
@@ -66,41 +66,33 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 api.simple()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(object : ObserverX<ResponsePacket<String>>(context) {
-                            override fun onResponse(response: ResponsePacket<String>) {
-                                Toast.makeText(context, "response:" + response.message, Toast.LENGTH_SHORT).show()
-                            }
-                        })
+                        .subscribeX(context) {
+                            Toast.makeText(context, "response:" + it.getMessage(), Toast.LENGTH_SHORT).show()
+                        }
 
             R.id.buttonNetError ->
                 api.netError()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(object : ObserverX<ResponsePacket<String>>(context) {
-                            override fun onResponse(response: ResponsePacket<String>) {
-                                Toast.makeText(context, "response:" + response.message, Toast.LENGTH_SHORT).show()
-                            }
-                        })
+                        .subscribeX(context) {
+                            Toast.makeText(context, "response:" + it.getMessage(), Toast.LENGTH_SHORT).show()
+                        }
 
             R.id.buttonBzError ->
                 api.bzError()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(object : ObserverX<ResponsePacket<String>>(context) {
-                            override fun onResponse(response: ResponsePacket<String>) {
-                                Toast.makeText(context, "response:" + response.message, Toast.LENGTH_SHORT).show()
-                            }
-                        })
+                        .subscribeX(context) {
+                            Toast.makeText(context, "response:" + it.getMessage(), Toast.LENGTH_SHORT).show()
+                        }
 
             R.id.buttonAuthorizeFailed ->
                 api.authorizeFailed()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(object : ObserverX<ResponsePacket<String>>(context) {
-                            override fun onResponse(response: ResponsePacket<String>) {
-                                Toast.makeText(context, "response:" + response.message, Toast.LENGTH_SHORT).show()
-                            }
-                        })
+                        .subscribeX(context) {
+                            Toast.makeText(context, "response:" + it.getMessage(), Toast.LENGTH_SHORT).show()
+                        }
         }
     }
 }

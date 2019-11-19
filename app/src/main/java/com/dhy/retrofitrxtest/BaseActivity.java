@@ -43,31 +43,6 @@ public abstract class BaseActivity extends AppCompatActivity implements IDisposa
         disposableHandler.onDestroy(this);
     }
 
-    void test(API api, final Context context) {
-        api.simple()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ObserverX<ResponsePacket<String>>(context) {
-                    protected void onResponse(ResponsePacket<String> response) {
-                        Toast.makeText(context, "response:" + response.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        subscribeAndroid(api.simple())
-                .subscribe(new ObserverX<ResponsePacket<String>>(context) {
-                    protected void onResponse(ResponsePacket<String> response) {
-                        Toast.makeText(context, "response:" + response.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        api.simple().compose(BaseActivity.<ResponsePacket<String>>composeAndroid())
-                .subscribe(new ObserverX<ResponsePacket<String>>(context) {
-                    protected void onResponse(ResponsePacket<String> response) {
-                        Toast.makeText(context, "response:" + response.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
     static <T> Observable<T> subscribeAndroid(Observable<T> observable) {
         return observable.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());

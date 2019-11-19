@@ -44,8 +44,8 @@ class ObserverXBuilder<T>(private val context: Context, private val observable: 
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : ObserverX<T>(context, successOnly, autoDismiss) {
-                    override fun onResponse(t: T) {
-                        response(t)
+                    override fun onResponse(response: T) {
+                        response(response)
                     }
 
                     override fun onFailed(status: IResponseStatus) {
@@ -59,8 +59,8 @@ class ObserverXBuilder<T>(private val context: Context, private val observable: 
                         if (failed != null) {
                             val error = errorHandler.parseError(e)
                             val status = object : IResponseStatus {
-                                override fun getCode() = error.code
-                                override fun getMessage() = error.message
+                                override fun getCode() = error.getCode()
+                                override fun getMessage() = error.getMessage()
                                 override fun isSuccess() = false
                             }
                             val hanle = failed!!(status)
