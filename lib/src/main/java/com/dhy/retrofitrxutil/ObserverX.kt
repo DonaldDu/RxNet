@@ -5,7 +5,7 @@ import android.content.Context
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 
-abstract class ObserverX<T>(override val context: Context, private val successOnly: Boolean = true, private val autoDismiss: Boolean = true) : Observer<T>, IObserverX {
+abstract class ObserverX<T>(override val context: Context, private val successOnly: Boolean = true) : Observer<T>, IObserverX {
     private var disposable: Disposable? = null
     private val progress: StyledProgress by lazy {
         getStyledProgress() ?: StyledProgressOfNone.instance
@@ -55,7 +55,7 @@ abstract class ObserverX<T>(override val context: Context, private val successOn
 
     override fun onComplete() {
         cancel()
-        if (autoDismiss || forceDismissProgress) dismissProgress()
+        dismissProgress()
     }
 
     fun showProgress() {
@@ -92,7 +92,5 @@ abstract class ObserverX<T>(override val context: Context, private val successOn
         fun setDefaultStyledProgressGenerator(generator: StyledProgressGenerator?) {
             defaultStyledProgressGenerator = generator
         }
-
-        var forceDismissProgress = true
     }
 }

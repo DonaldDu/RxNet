@@ -9,7 +9,6 @@ class ObserverXBuilder<T>(private val context: Context, private val observable: 
     private var failed: ((IResponseStatus) -> Boolean)? = null
     private var progress: (((StyledProgress?) -> StyledProgress?))? = null
     private var successOnly: Boolean = true
-    private var autoDismiss: Boolean = true
     private var response: (T) -> Unit = {}
 
     fun failed(handler: ((IResponseStatus) -> Boolean)?): ObserverXBuilder<T> {
@@ -27,11 +26,6 @@ class ObserverXBuilder<T>(private val context: Context, private val observable: 
         return this
     }
 
-    fun autoDismiss(autoDismiss: Boolean): ObserverXBuilder<T> {
-        this.autoDismiss = autoDismiss
-        return this
-    }
-
     /**
      * set response clouser and build to start request
      * */
@@ -43,7 +37,7 @@ class ObserverXBuilder<T>(private val context: Context, private val observable: 
     fun build() {
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : ObserverX<T>(context, successOnly, autoDismiss) {
+                .subscribe(object : ObserverX<T>(context, successOnly) {
                     override fun onResponse(response: T) {
                         response(response)
                     }
@@ -59,8 +53,8 @@ class ObserverXBuilder<T>(private val context: Context, private val observable: 
                         if (failed != null) {
                             val error = errorHandler.parseError(e)
                             val status = object : IResponseStatus {
-                                override fun getCode() = error.getCode()
-                                override fun getMessage() = error.getMessage()
+                                override fun getCode() = error.code
+                                override fun getMessage() = error.message
                                 override fun isSuccess() = false
                             }
                             val hanle = failed!!(status)
