@@ -1,12 +1,9 @@
 package com.dhy.retrofitrxutil
 
 import android.app.Activity
-import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Looper
 import android.widget.Toast
-
 import retrofit2.HttpException
 
 abstract class BaseErrorHandler : IErrorHandler {
@@ -23,8 +20,8 @@ abstract class BaseErrorHandler : IErrorHandler {
     }
 
     override fun onActivityError(activity: Activity, error: IError) {
-        val dialog = showDialog(activity, error.getMessage())
-        if (dialog != null && isAuthorizeFailed(activity, error.getCode())) {
+        val dialog = showDialog(activity, error.message)
+        if (dialog != null && isAuthorizeFailed(activity, error.code)) {
             dialog.setOnDismissListener { onLogout(activity) }
         }
     }
@@ -32,7 +29,7 @@ abstract class BaseErrorHandler : IErrorHandler {
     override fun onBackgroundError(context: Context, error: IError, e: Throwable) {
         if (isDebug()) {
             if (Looper.myLooper() != null) {
-                val msg = error.getMessage()
+                val msg = error.message
                 Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
             }
             e.printStackTrace()
