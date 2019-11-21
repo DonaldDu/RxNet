@@ -3,9 +3,14 @@ package com.dhy.retrofitrxutil
 import android.content.Context
 import io.reactivex.Observable
 
-fun <T : Any> Observable<T>.subscribeX(context: Context, autoDismiss: Boolean = true, response: (T) -> Unit) {
+fun <T : Any> Observable<T>.subscribeX(context: Context, response: (T) -> Unit) {
     ObserverXBuilder(context, this)
-            .autoDismiss(autoDismiss)
+            .response(response)
+}
+
+@Deprecated(message = "autoDismiss is Deprecated")
+fun <T : Any> Observable<T>.subscribeX(context: Context, autoDismiss: Boolean, response: (T) -> Unit) {
+    ObserverXBuilder(context, this)
             .response(response)
 }
 

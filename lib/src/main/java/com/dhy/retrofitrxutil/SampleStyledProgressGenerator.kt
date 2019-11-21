@@ -7,7 +7,7 @@ import android.content.DialogInterface
 class SampleStyledProgressGenerator : StyledProgressGenerator {
     override fun generate(observer: IObserverX): StyledProgress? {
         return if (observer.context is Activity) {
-            DialogProgress(observer.context as Activity, DialogInterface.OnCancelListener { observer.cancel() }) {
+            DelayDialogProgress(observer.context as Activity, DialogInterface.OnCancelListener { observer.cancel() }) {
                 ProgressDialog(it)
             }
         } else null

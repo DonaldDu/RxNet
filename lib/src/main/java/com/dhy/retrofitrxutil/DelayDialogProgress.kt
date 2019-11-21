@@ -6,7 +6,10 @@ import android.content.Context
 import android.content.DialogInterface
 import java.util.*
 
-class DialogProgress(private val context: Activity, private val cancelListener: DialogInterface.OnCancelListener, private val dialogCreater: (context: Activity) -> Dialog) : StyledProgress {
+/**
+ * 所有请求进度框都延迟关闭，以实现多个连续请求中，进度框不闪烁。
+ * */
+class DelayDialogProgress(private val context: Activity, private val cancelListener: DialogInterface.OnCancelListener, private val dialogCreater: (context: Activity) -> Dialog) : StyledProgress {
     companion object {
         private val dialogs: WeakHashMap<Context, Dialog> = WeakHashMap()
     }
