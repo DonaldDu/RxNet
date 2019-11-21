@@ -1,5 +1,6 @@
 package com.dhy.retrofitrxutil
 
+import android.app.Activity
 import android.content.Context
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
@@ -16,7 +17,7 @@ abstract class ObserverX<T>(override val context: Context, private val successOn
      * @return null for StyledProgressOfNone
      */
     protected open fun getStyledProgress(): StyledProgress? {
-        return defaultStyledProgressGenerator!!.generate(this)
+        return defaultStyledProgressGenerator?.generate(this)
     }
 
     override fun onSubscribe(disposable: Disposable) {
@@ -30,7 +31,7 @@ abstract class ObserverX<T>(override val context: Context, private val successOn
     override fun onNext(t: T) {
         if (successOnly && t is IResponseStatus) {
             val status = t as IResponseStatus
-            if (status.isSuccess()) {
+            if (status.isSuccess) {
                 onResponse(t)
             } else {
                 onFailed(status)
@@ -58,7 +59,11 @@ abstract class ObserverX<T>(override val context: Context, private val successOn
     }
 
     fun showProgress() {
-        progress.showProgress()
+        if (!isFinishing()) progress.showProgress()
+    }
+
+    private fun isFinishing(): Boolean {
+        return context is Activity && (context as Activity).isFinishing
     }
 
     override fun dismissProgress() {

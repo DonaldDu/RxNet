@@ -60,7 +60,9 @@ class DelayProgress(private val context: Context, private val dialog: Dialog) : 
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun onDestroy() {
-        decorView.removeCallbacks(runnable)
-        dialog.dismiss()
+        if (dialog.isShowing) {
+            decorView.removeCallbacks(runnable)
+            dialog.dismiss()
+        }
     }
 }

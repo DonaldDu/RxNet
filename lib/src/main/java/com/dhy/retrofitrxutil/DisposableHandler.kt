@@ -3,20 +3,18 @@ package com.dhy.retrofitrxutil
 import android.app.Application
 import android.content.Context
 
-import java.util.ArrayList
-import java.util.HashMap
-
 import io.reactivex.disposables.Disposable
+import java.util.*
 
 class DisposableHandler : IDisposableHandler {
-    private val map: MutableMap<Context, MutableList<Disposable>> = mutableMapOf()
+    private val requests: WeakHashMap<Context, MutableList<Disposable>> = WeakHashMap()
 
     override fun registerDisposable(context: Context, disposable: Disposable) {
         if (context !is Application) {
-            var list = map[context]
+            var list = requests[context]
             if (list == null) {
                 list = ArrayList()
-                map[context] = list
+                requests[context] = list
             }
             list.add(disposable)
         }
@@ -24,16 +22,18 @@ class DisposableHandler : IDisposableHandler {
 
     override fun onComplete(context: Context, disposable: Disposable) {
         if (context !is Application) {
-            val list = map[context]
+            val list = requests[context]
             list?.remove(disposable)
         }
     }
 
     override fun onDestroy(context: Context) {
-        val list = map.remove(context)
-        if (list != null)
-            for (disposable in list) {
-                disposable.dispose()
+        val list = requests.remove(context)
+        if (list != null) {
+            val iterator = list.iterator()
+            while (iterator.hasNext()) {
+                iterator.next().dispose()
             }
+        }
     }
 }
