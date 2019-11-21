@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.dhy.retrofitrxutil.ObserverX
 import com.dhy.retrofitrxutil.subscribeX
 import com.dhy.retrofitrxutil.subscribeXBuilder
 import com.dhy.xintent.Waterfall

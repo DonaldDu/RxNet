@@ -8,7 +8,8 @@ fun <T : Any> Observable<T>.subscribeX(context: Context, response: (T) -> Unit) 
             .response(response)
 }
 
-@Deprecated(message = "autoDismiss is Deprecated")
+@Deprecated(message = "autoDismiss is Deprecated. Use DelayDialogProgress for global setting.",
+        replaceWith = ReplaceWith("this.subscribeX(context,response)"))
 fun <T : Any> Observable<T>.subscribeX(context: Context, autoDismiss: Boolean, response: (T) -> Unit) {
     ObserverXBuilder(context, this)
             .response(response)
