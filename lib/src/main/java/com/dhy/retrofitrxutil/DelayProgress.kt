@@ -1,7 +1,6 @@
 package com.dhy.retrofitrxutil
 
 import android.app.Dialog
-import android.arch.lifecycle.LifecycleObserver
 
 val Dialog.delayProgress: DelayProgress
     get() {
@@ -16,7 +15,7 @@ val Dialog.delayProgress: DelayProgress
         }
     }
 
-class DelayProgress(private val dialog: Dialog) : LifecycleObserver {
+class DelayProgress(private val dialog: Dialog) {
     private val decorView = dialog.window!!.decorView
     private val runnable = Runnable {
         if (dialog.isShowing) dialog.dismiss()
