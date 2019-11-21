@@ -31,10 +31,10 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         for (i in 0 until root.childCount) {
             root.getChildAt(i).setOnClickListener(this)
         }
+        val apiSample = api.simple()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
         buttonMultReq.setOnClickListener {
-            val apiSample = api.simple()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
             Waterfall.flow {
                 apiSample.subscribeX(context) {
                     Log.i("TAG", "apiSample1")
@@ -51,6 +51,14 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                     Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+        buttonFinish.setOnClickListener {
+            apiSample.subscribeX(context) {
+                Log.i("TAG", "apiSample")
+            }
+            buttonFinish.postDelayed({
+                finish()
+            }, 500)
         }
     }
 

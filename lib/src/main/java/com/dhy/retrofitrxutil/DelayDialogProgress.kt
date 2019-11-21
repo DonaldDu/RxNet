@@ -11,7 +11,7 @@ import java.util.*
  * */
 class DelayDialogProgress(private val context: Activity, private val cancelListener: DialogInterface.OnCancelListener, private val dialogCreater: (context: Activity) -> Dialog) : StyledProgress {
     companion object {
-        private val dialogs: WeakHashMap<Context, Dialog> = WeakHashMap()
+        internal val dialogs: WeakHashMap<Context, Dialog> = WeakHashMap()
     }
 
     override fun showProgress() {

@@ -6,7 +6,7 @@ import android.content.Context
 import io.reactivex.disposables.Disposable
 import java.util.*
 
-class DisposableHandler : IDisposableHandler {
+object DisposableHandler : IDisposableHandler {
     private val requests: WeakHashMap<Context, MutableList<Disposable>> = WeakHashMap()
 
     override fun registerDisposable(context: Context, disposable: Disposable) {
@@ -28,6 +28,9 @@ class DisposableHandler : IDisposableHandler {
     }
 
     override fun onDestroy(context: Context) {
+        val dialog = DelayDialogProgress.dialogs[context]
+        if (dialog?.isShowing == true) dialog.dismiss()
+
         val list = requests.remove(context)
         if (list != null) {
             val iterator = list.iterator()
