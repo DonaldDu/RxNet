@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.dhy.retrofitrxutil.delayResponse
 import com.dhy.retrofitrxutil.subscribeX
 import com.dhy.retrofitrxutil.subscribeXBuilder
 import com.dhy.xintent.Waterfall
@@ -19,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 class MainActivity : BaseActivity(), View.OnClickListener {
-    lateinit var context: Context
+    private lateinit var context: Context
     private lateinit var api: API
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +61,15 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 finish()
             }, 500)
         }
+
+        buttonDelay.setOnClickListener {
+            val start = System.currentTimeMillis()
+            apiSample.delayResponse(5000)
+                    .subscribeX(context) {
+                        val cost = System.currentTimeMillis() - start
+                        Log.i("TAG", "apiSample cost $cost")
+                    }
+        }
     }
 
     private fun initApi() {
@@ -73,6 +83,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         api = retrofit.create(API::class.java)
     }
 
+    @Suppress("unused")
     private fun subscribeX() {
         api.simple()
                 .subscribeOn(Schedulers.newThread())

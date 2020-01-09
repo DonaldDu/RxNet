@@ -18,3 +18,15 @@ fun <T : Any> Observable<T>.subscribeX(context: Context, autoDismiss: Boolean, r
 fun <T : Any> Observable<T>.subscribeXBuilder(context: Context): ObserverXBuilder<T> {
     return ObserverXBuilder(context, this)
 }
+
+/**
+ * start request immediately, send response back beyond atLeastMillis time
+ * */
+fun <T : Any> Observable<T>.delayResponse(atLeastMillis: Long = 1500): Observable<T> {
+    val start = System.currentTimeMillis()
+    return map {
+        val delay = atLeastMillis - (System.currentTimeMillis() - start)
+        if (delay > 0) Thread.sleep(delay)
+        it
+    }
+}

@@ -43,4 +43,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="finish now" />
+
+    <Button
+        android:id="@+id/buttonDelay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="delay response" />
 </LinearLayout>
