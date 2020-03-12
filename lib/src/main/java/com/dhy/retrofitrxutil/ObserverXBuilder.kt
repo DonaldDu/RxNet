@@ -54,6 +54,7 @@ class ObserverXBuilder<T>(private val context: Context, private val observable: 
                             val error = errorHandler.parseError(e)
                             val status = object : IResponseStatus {
                                 override fun getCode() = error.code
+                                override fun httpCode() = error.httpCode()
                                 override fun getMessage() = error.message
                                 override fun isSuccess() = false
                             }

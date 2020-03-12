@@ -14,8 +14,8 @@ class SampleErrorHandler : BaseErrorHandler() {
                 .setPositiveButton("OK", null).show()
     }
 
-    override fun isAuthorizeFailed(activity: Activity, errorCode: Int): Boolean {
-        return errorCode == 9001
+    override fun isAuthorizeFailed(activity: Activity, error: IError): Boolean {
+        return error.code == 9001
     }
 
     override fun onLogout(context: Context) {

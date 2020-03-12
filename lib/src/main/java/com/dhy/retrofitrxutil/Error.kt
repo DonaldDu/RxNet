@@ -1,11 +1,7 @@
 package com.dhy.retrofitrxutil
 
-open class Error(private val code: Int, private val message: String) : IError {
-    override fun getCode(): Int {
-        return code
-    }
-
-    override fun getMessage(): String {
-        return message
-    }
+open class Error(private val httpCode: Int, private val code: Int, private val message: String) : IError {
+    override fun getCode() = code
+    override fun httpCode() = httpCode
+    override fun getMessage() = message
 }

@@ -11,7 +11,7 @@ interface IErrorHandler {
     /**
      * if failed then logout. Should not be LoginActivity
      */
-    fun isAuthorizeFailed(activity: Activity, errorCode: Int): Boolean
+    fun isAuthorizeFailed(activity: Activity, error: IError): Boolean
 
     fun onLogout(context: Context)
     fun onActivityError(activity: Activity, error: IError)

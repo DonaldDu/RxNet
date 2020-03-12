@@ -9,7 +9,7 @@ android {
         //noinspection OldTargetApi
         targetSdkVersion 27
         versionCode 1
-        versionName "1.2.3"
+        versionName "1.2.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "boolean", "INCLUDE_PROGUARD", "true"
     }
@@ -24,7 +24,7 @@ android {
 
 publish {
     userOrg = 'userOrg'
-    groupId = 'com.github.SugarAndroid'
+    groupId = 'com.github.DonaldDu'
     artifactId = 'RetrofitRxUtil'
     publishVersion = android.defaultConfig.versionName
     desc = 'desc'
@@ -35,10 +35,10 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     api 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    api 'com.squareup.retrofit2:retrofit:2.6.2'
+    api 'com.squareup.retrofit2:retrofit:2.7.2'
 
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }

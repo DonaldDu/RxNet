@@ -21,7 +21,7 @@ abstract class BaseErrorHandler : IErrorHandler {
 
     override fun onActivityError(activity: Activity, error: IError) {
         val dialog = showDialog(activity, error.message)
-        if (dialog != null && isAuthorizeFailed(activity, error.code)) {
+        if (dialog != null && isAuthorizeFailed(activity, error)) {
             dialog.setOnDismissListener { onLogout(activity) }
         }
     }
@@ -39,9 +39,11 @@ abstract class BaseErrorHandler : IErrorHandler {
     override fun parseError(e: Throwable): IError {
         val code: Int
         val message: String
+        var httpCode = -1
         when (e) {
             is ThrowableBZ -> return e.status
             is HttpException -> {
+                httpCode = e.code()
                 code = e.code()
                 message = "HTTP $code"
             }
@@ -54,6 +56,6 @@ abstract class BaseErrorHandler : IErrorHandler {
                 message = msg!!
             }
         }
-        return Error(code, message)
+        return Error(httpCode, code, message)
     }
 }

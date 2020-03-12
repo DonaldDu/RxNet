@@ -26,6 +26,11 @@ public class ResponsePacket<DATA extends Serializable> implements Serializable, 
     }
 
     @Override
+    public int httpCode() {
+        return 0;
+    }
+
+    @Override
     public String getMessage() {
         return (result != null ? result.message : "");
     }
