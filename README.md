@@ -52,10 +52,7 @@ public abstract class BaseActivity extends AppCompatActivity implements IDisposa
 
 MainActivity中带默认错误处理和进度框的调用
 ```    
-    api.simple()
-               .subscribeOn(Schedulers.newThread())
-               .observeOn(AndroidSchedulers.mainThread())
-               .subscribeX(context) {//Kotlin only
+    api.simple().subscribeX(context) {//Kotlin only
                    Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
                }  
                
