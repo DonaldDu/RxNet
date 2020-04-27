@@ -59,7 +59,7 @@ class ObserverXBuilder<T>(private val context: Context, private val observable: 
                                 override fun isSuccess() = false
                             }
                             val hanle = failed!!(status)
-                            if (!hanle) super.onError(e)
+                            if (!hanle) super.onError(ThrowableBZ(status))
                         } else super.onError(e)
                     }
 
