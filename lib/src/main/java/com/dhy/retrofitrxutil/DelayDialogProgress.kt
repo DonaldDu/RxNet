@@ -23,10 +23,11 @@ class DelayDialogProgress(private val context: Activity, private val cancelListe
         }
     }
 
-    override fun dismissProgress() {
+    override fun dismissProgress(delay: Boolean) {
         val dialog = getDialog(context, false)
         if (dialog != null && dialog.isShowing) {
-            dialog.delayProgress.onDismiss()
+            if (delay) dialog.delayProgress.onDismiss()
+            else dialog.dismiss()
         }
     }
 

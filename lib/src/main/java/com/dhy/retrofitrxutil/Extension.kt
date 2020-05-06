@@ -3,6 +3,9 @@ package com.dhy.retrofitrxutil
 import android.content.Context
 import io.reactivex.Observable
 
+/**
+ * auto request in io, response in main thread
+ * */
 fun <T : Any> Observable<T>.subscribeX(context: Context, response: (T) -> Unit) {
     ObserverXBuilder(context, this)
             .response(response)

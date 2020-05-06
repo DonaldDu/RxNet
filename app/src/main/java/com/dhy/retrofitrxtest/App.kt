@@ -3,8 +3,8 @@ package com.dhy.retrofitrxtest
 import android.app.Application
 import android.content.Context
 import com.dhy.retrofitrxutil.ObserverX
-import com.dhy.retrofitrxutil.SampleErrorHandler
-import com.dhy.retrofitrxutil.SampleStyledProgressGenerator
+import com.dhy.retrofitrxutil.sample.SampleErrorHandler
+import com.dhy.retrofitrxutil.sample.SampleStyledProgressGenerator
 
 class App : Application() {
     override fun onCreate() {

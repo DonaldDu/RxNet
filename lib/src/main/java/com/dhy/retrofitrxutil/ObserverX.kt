@@ -2,11 +2,16 @@ package com.dhy.retrofitrxutil
 
 import android.app.Activity
 import android.content.Context
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 
-abstract class ObserverX<T>(override val context: Context, private val successOnly: Boolean = true) : Observer<T>, IObserverX {
+abstract class ObserverX<T>(final override val context: Context, private val successOnly: Boolean = true) : Observer<T>, IObserverX, LifecycleObserver {
     private var disposable: Disposable? = null
+    private var lifecycleOwner: LifecycleOwner? = context as? LifecycleOwner
     private val progress: StyledProgress by lazy {
         getStyledProgress() ?: StyledProgressOfNone.instance
     }
@@ -23,12 +28,22 @@ abstract class ObserverX<T>(override val context: Context, private val successOn
     override fun onSubscribe(disposable: Disposable) {
         this.disposable = disposable
         progress.showProgress()
-        if (context is IDisposable) {
-            (context as IDisposable).registerDisposable(context, disposable)
-        }
+        lifecycleOwner?.lifecycle?.addObserver(this)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    private fun onDestroy() {
+        dismissProgress(false)
+        removeObserver()
+        cancel()
+    }
+
+    private fun removeObserver() {
+        lifecycleOwner?.lifecycle?.removeObserver(this)
     }
 
     override fun onNext(t: T) {
+        removeObserver()
         if (successOnly && t is IResponseStatus) {
             val status = t as IResponseStatus
             if (status.isSuccess) {
@@ -50,6 +65,7 @@ abstract class ObserverX<T>(override val context: Context, private val successOn
         get() = defaultErrorHandler!!
 
     override fun onError(e: Throwable) {
+        removeObserver()
         errorHandler.onError(this, e)
     }
 
@@ -63,21 +79,16 @@ abstract class ObserverX<T>(override val context: Context, private val successOn
     }
 
     private fun isFinishing(): Boolean {
-        return context is Activity && (context as Activity).isFinishing
+        return context is Activity && context.isFinishing
     }
 
-    override fun dismissProgress() {
-        progress.dismissProgress()
+    override fun dismissProgress(delay: Boolean) {
+        progress.dismissProgress(delay)
     }
 
     protected abstract fun onResponse(response: T)
     override fun cancel() {
-        if (disposable != null) {
-            disposable!!.dispose()
-            if (context is IDisposable) {
-                (context as IDisposable).onComplete(context, disposable!!)
-            }
-        }
+        disposable?.dispose()
     }
 
     companion object {

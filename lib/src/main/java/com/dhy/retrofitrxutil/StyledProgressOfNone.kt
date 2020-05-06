@@ -2,7 +2,7 @@ package com.dhy.retrofitrxutil
 
 class StyledProgressOfNone : StyledProgress {
     override fun showProgress() {}
-    override fun dismissProgress() {}
+    override fun dismissProgress(delay: Boolean) {}
 
     companion object {
         @JvmStatic

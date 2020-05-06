@@ -1,4 +1,4 @@
-package com.dhy.retrofitrxutil
+package com.dhy.retrofitrxutil.sample
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -6,6 +6,9 @@ import android.app.Dialog
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.dhy.retrofitrxutil.BaseErrorHandler
+import com.dhy.retrofitrxutil.IError
+import com.dhy.retrofitrxutil.IErrorHandler
 
 class SampleErrorHandler : BaseErrorHandler() {
     override fun showDialog(context: Context, msg: String): Dialog? {

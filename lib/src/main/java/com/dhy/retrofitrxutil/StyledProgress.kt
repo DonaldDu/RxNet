@@ -2,5 +2,5 @@ package com.dhy.retrofitrxutil
 
 interface StyledProgress {
     fun showProgress()
-    fun dismissProgress()
+    fun dismissProgress(delay: Boolean = true)
 }

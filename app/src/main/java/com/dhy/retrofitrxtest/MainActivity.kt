@@ -6,12 +6,11 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.dhy.retrofitrxutil.delayResponse
 import com.dhy.retrofitrxutil.subscribeX
 import com.dhy.retrofitrxutil.subscribeXBuilder
 import com.dhy.xintent.Waterfall
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -19,7 +18,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-class MainActivity : BaseActivity(), View.OnClickListener {
+class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var context: Context
     private lateinit var api: API
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,8 +32,6 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             root.getChildAt(i).setOnClickListener(this)
         }
         val apiSample = api.simple()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
         buttonMultReq.setOnClickListener {
             Waterfall.flow {
                 apiSample.subscribeX(context) {
@@ -85,19 +82,14 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 
     @Suppress("unused")
     private fun subscribeX() {
-        api.simple()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(context) {
-                    Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
-                }
-
-
         api.simple().subscribeX(context) {
             Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
         }
+
         api.simple().subscribeXBuilder(context)
-                .response {
+                .failed {
+                    true
+                }.response {
 
                 }
     }
@@ -105,36 +97,24 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.buttonOK ->
-                api.simple()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeX(context) {
-                            Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
-                        }
+                api.simple().subscribeX(context) {
+                    Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
+                }
 
             R.id.buttonNetError ->
-                api.netError()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeX(context) {
-                            Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
-                        }
+                api.netError().subscribeX(context) {
+                    Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
+                }
 
             R.id.buttonBzError ->
-                api.bzError()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeX(context) {
-                            Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
-                        }
+                api.bzError().subscribeX(context) {
+                    Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
+                }
 
             R.id.buttonAuthorizeFailed ->
-                api.authorizeFailed()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeX(context) {
-                            Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
-                        }
+                api.authorizeFailed().subscribeX(context) {
+                    Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
+                }
         }
     }
 }
