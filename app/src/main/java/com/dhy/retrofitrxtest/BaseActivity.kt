@@ -1,6 +1,6 @@
 package com.dhy.retrofitrxtest
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.dhy.retrofitrxutil.DisposableHandler
 import com.dhy.retrofitrxutil.IDisposable
 
