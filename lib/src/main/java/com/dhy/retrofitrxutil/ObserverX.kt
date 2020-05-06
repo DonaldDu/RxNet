@@ -83,13 +83,26 @@ abstract class ObserverX<T>(override val context: Context, private val successOn
     companion object {
         private var defaultErrorHandler: IErrorHandler? = null
         private var defaultStyledProgressGenerator: StyledProgressGenerator? = null
+
         @JvmStatic
+        @Deprecated("use setErrorHandler", replaceWith = ReplaceWith("setErrorHandler(handler)"))
         fun setDefaultErrorHandler(handler: IErrorHandler?) {
             defaultErrorHandler = handler
         }
 
         @JvmStatic
+        fun setErrorHandler(handler: IErrorHandler?) {
+            defaultErrorHandler = handler
+        }
+
+        @JvmStatic
+        @Deprecated("use setProgressGenerator", replaceWith = ReplaceWith("setProgressGenerator(generator)"))
         fun setDefaultStyledProgressGenerator(generator: StyledProgressGenerator?) {
+            defaultStyledProgressGenerator = generator
+        }
+
+        @JvmStatic
+        fun setProgressGenerator(generator: StyledProgressGenerator?) {
             defaultStyledProgressGenerator = generator
         }
     }
