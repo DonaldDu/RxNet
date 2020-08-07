@@ -12,8 +12,8 @@ import io.reactivex.disposables.Disposable
 abstract class ObserverX<T>(final override val context: Context, private val successOnly: Boolean = true) : Observer<T>, IObserverX, LifecycleObserver {
     private var disposable: Disposable? = null
     private var lifecycleOwner: LifecycleOwner? = context as? LifecycleOwner
-    private val progress: StyledProgress by lazy {
-        getStyledProgress() ?: StyledProgressOfNone.instance
+    private val progress: StyledProgress? by lazy {
+        getStyledProgress()
     }
 
     /**
@@ -27,7 +27,7 @@ abstract class ObserverX<T>(final override val context: Context, private val suc
 
     override fun onSubscribe(disposable: Disposable) {
         this.disposable = disposable
-        progress.showProgress()
+        progress?.showProgress()
         lifecycleOwner?.lifecycle?.addObserver(this)
     }
 
@@ -75,7 +75,7 @@ abstract class ObserverX<T>(final override val context: Context, private val suc
     }
 
     fun showProgress() {
-        if (!isFinishing()) progress.showProgress()
+        if (!isFinishing()) progress?.showProgress()
     }
 
     private fun isFinishing(): Boolean {
@@ -83,7 +83,7 @@ abstract class ObserverX<T>(final override val context: Context, private val suc
     }
 
     override fun dismissProgress(delay: Boolean) {
-        progress.dismissProgress(delay)
+        progress?.dismissProgress(delay)
     }
 
     protected abstract fun onResponse(response: T)

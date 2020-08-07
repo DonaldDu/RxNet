@@ -64,8 +64,8 @@ class ObserverXBuilder<T>(private val context: Context, private val observable: 
                     }
 
                     override fun getStyledProgress(): StyledProgress? {
-                        if (progress != null) return progress!!(super.getStyledProgress())
-                        return super.getStyledProgress()
+                        val p = super.getStyledProgress()
+                        return if (progress != null) progress!!(p) else p
                     }
                 })
     }

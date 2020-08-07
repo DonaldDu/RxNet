@@ -13,7 +13,11 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "boolean", "INCLUDE_PROGUARD", "true"
     }
-
+    compileOptions {
+        def PUBLISH_GROUP_ID = 'com.github.SugarAndroid'
+        def PUBLISH_ARTIFACT_ID = rootProject.name
+        kotlinOptions.freeCompilerArgs += ['-module-name', "${PUBLISH_GROUP_ID}_${PUBLISH_ARTIFACT_ID}"]
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -36,7 +40,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
 
     api 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    api 'com.squareup.retrofit2:retrofit:2.8.1'
+    api 'com.squareup.retrofit2:retrofit:2.9.0'
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
