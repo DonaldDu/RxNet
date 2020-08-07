@@ -41,7 +41,7 @@ dependencies {
     implementation "androidx.fragment:fragment:1.2.5"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     api 'io.reactivex.rxjava3:rxandroid:3.0.0'
-    api 'com.squareup.retrofit2:retrofit:2.9.0'
+
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
