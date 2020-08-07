@@ -1,15 +1,45 @@
-package com.dhy.retrofitrxtest
+package com.dhy.retrofitrxutil
 
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
-import com.dhy.retrofitrxutil.StyledProgress
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
+import java.lang.ref.WeakReference
 
-class MultListenerDialogFragment(fragmentActivity: FragmentActivity) : DialogFragment(), StyledProgress {
+class MultListenerDialog(private val fragmentActivity: FragmentActivity) : DialogFragment(), StyledProgress, LifecycleObserver {
+    companion object {
+        private val progresses: MutableMap<Context, MultListenerDialog> = mutableMapOf()
+
+        fun getInstance(activity: FragmentActivity, observer: IObserverX? = null): StyledProgress {
+            val progress = progresses[activity] ?: MultListenerDialog(activity)
+            if (observer != null) progress.canceler = WeakReference(observer)
+            return progress
+        }
+    }
+
+    private var canceler: WeakReference<IObserverX>? = null
+
+    private val lifecycleOwner: LifecycleOwner = fragmentActivity
+
+    init {
+        progresses[fragmentActivity] = this
+        lifecycleOwner.lifecycle.addObserver(this)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    private fun onActivityDestroy() {
+        lifecycleOwner.lifecycle.removeObserver(this)
+        progresses.remove(fragmentActivity)
+    }
+
     private val supportFragmentManager = fragmentActivity.supportFragmentManager
     private val delayProgress = DelayProgress()
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -33,6 +63,7 @@ class MultListenerDialogFragment(fragmentActivity: FragmentActivity) : DialogFra
             it.next().onDismiss(dialog)
         }
         super.onDismiss(dialog)
+        delayProgress.count = 0
     }
 
     private val onCancelListeners: MutableSet<DialogInterface.OnCancelListener> = mutableSetOf()
@@ -45,6 +76,7 @@ class MultListenerDialogFragment(fragmentActivity: FragmentActivity) : DialogFra
     }
 
     override fun onCancel(dialog: DialogInterface) {
+        canceler?.get()?.cancel()
         onCancelListeners.iterator {
             it.next().onCancel(dialog)
         }
@@ -62,6 +94,7 @@ class MultListenerDialogFragment(fragmentActivity: FragmentActivity) : DialogFra
     }
 
     private inner class DelayProgress {
+        internal var count = 0
         private val decorView: View?
             get() {
                 return dialog?.window?.decorView
@@ -69,7 +102,6 @@ class MultListenerDialogFragment(fragmentActivity: FragmentActivity) : DialogFra
         private val runnable = Runnable {
             if (dialog?.isShowing == true) dismiss()
         }
-        private var count = 0
 
         fun onShow() {
             count++
@@ -88,4 +120,12 @@ class MultListenerDialogFragment(fragmentActivity: FragmentActivity) : DialogFra
 fun <E> Set<E>.iterator(action: (Iterator<E>) -> Unit) {
     val iterator = iterator()
     while (iterator.hasNext()) action(iterator)
+}
+
+fun FragmentActivity.showProgress() {
+    MultListenerDialog.getInstance(this).showProgress()
+}
+
+fun FragmentActivity.dismissProgress(delay: Boolean = true) {
+    MultListenerDialog.getInstance(this).dismissProgress(delay)
 }
