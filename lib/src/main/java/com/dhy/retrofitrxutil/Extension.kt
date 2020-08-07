@@ -2,7 +2,7 @@ package com.dhy.retrofitrxutil
 
 import android.app.Dialog
 import android.content.Context
-import io.reactivex.Observable
+import io.reactivex.rxjava3.core.Observable
 
 /**
  * auto request in io, response in main thread

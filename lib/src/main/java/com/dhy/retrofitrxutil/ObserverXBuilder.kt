@@ -1,9 +1,9 @@
 package com.dhy.retrofitrxutil
 
 import android.content.Context
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class ObserverXBuilder<T>(private val context: Context, private val observable: Observable<T>) {
     private var failed: ((IResponseStatus) -> Boolean)? = null
@@ -44,8 +44,8 @@ class ObserverXBuilder<T>(private val context: Context, private val observable: 
 
                     override fun onFailed(status: IResponseStatus) {
                         if (failed != null) {
-                            val hanle = failed!!(status)
-                            if (!hanle) super.onFailed(status)
+                            val handle = failed!!(status)
+                            if (!handle) super.onFailed(status)
                         } else super.onFailed(status)
                     }
 
@@ -58,8 +58,8 @@ class ObserverXBuilder<T>(private val context: Context, private val observable: 
                                 override fun getMessage() = error.message
                                 override fun isSuccess() = false
                             }
-                            val hanle = failed!!(status)
-                            if (!hanle) super.onError(ThrowableBZ(status))
+                            val handle = failed!!(status)
+                            if (!handle) super.onError(ThrowableBZ(status))
                         } else super.onError(e)
                     }
 

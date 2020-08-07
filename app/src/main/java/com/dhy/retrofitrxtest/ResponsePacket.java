@@ -12,7 +12,7 @@ public class ResponsePacket<DATA extends Serializable> implements Serializable, 
     public void setMessage(String message) {
         if (result == null) result = new Result();
         result.message = message;
-        result.error_code = LOCALL_ERROR;
+        result.error_code = LOCAL_ERROR;
     }
 
     @Override
@@ -22,7 +22,7 @@ public class ResponsePacket<DATA extends Serializable> implements Serializable, 
 
     @Override
     public int getCode() {
-        return result != null ? result.error_code : LOCALL_ERROR;
+        return result != null ? result.error_code : LOCAL_ERROR;
     }
 
     @Override

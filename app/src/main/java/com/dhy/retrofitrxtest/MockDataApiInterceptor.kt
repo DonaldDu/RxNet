@@ -5,9 +5,9 @@ import java.io.IOException
 
 class MockDataApiInterceptor : Interceptor {
     companion object {
-        val allOk = "{\"result\":{\"code\":0,\"desc\":\"success\"}}"
-        val bzError = "{\"result\":{\"code\":1,\"desc\":\"bz error\"}}"
-        val authorizeFailed = "{\"result\":{\"code\":9001,\"desc\":\"登录失效，请重新登录\"},\"data\":null,\"validResult\":null}"
+        const val allOk = "{\"result\":{\"code\":0,\"desc\":\"success\"}}"
+        const val bzError = "{\"result\":{\"code\":1,\"desc\":\"bz error\"}}"
+        const val authorizeFailed = "{\"result\":{\"code\":9001,\"desc\":\"登录失效，请重新登录\"},\"data\":null,\"validResult\":null}"
     }
 
 
