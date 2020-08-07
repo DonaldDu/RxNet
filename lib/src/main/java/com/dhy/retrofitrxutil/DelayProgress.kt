@@ -4,15 +4,7 @@ import android.app.Dialog
 
 val Dialog.delayProgress: DelayProgress
     get() {
-        val v = window!!.decorView
-        val key = R.id.TAG_KEY_DELAY_PROGRESS
-        var data = v.getTag(key) as DelayProgress?
-        return if (data != null) data
-        else {
-            data = DelayProgress(this)
-            v.setTag(key, data)
-            data
-        }
+        return getTag(R.id.TAG_KEY_DELAY_PROGRESS) { DelayProgress(this) }
     }
 
 class DelayProgress(private val dialog: Dialog) {
@@ -23,7 +15,7 @@ class DelayProgress(private val dialog: Dialog) {
     private var count = 0
 
     init {
-        dialog.setOnDismissListener {
+        dialog.addOnDismissListener {
             count = 0
             decorView.removeCallbacks(runnable)
         }

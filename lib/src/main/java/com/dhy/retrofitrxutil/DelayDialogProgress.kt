@@ -29,7 +29,7 @@ class DelayDialogProgress(private val context: Activity, private val dialog: Dia
 
     init {
         dialogs[context] = this
-        dialog.setOnCancelListener {
+        dialog.addOnCancelListener {
             canceler?.get()?.cancel()
         }
         lifecycleOwner?.lifecycle?.addObserver(this)

@@ -1,5 +1,6 @@
 package com.dhy.retrofitrxutil
 
+import android.app.Dialog
 import android.content.Context
 import io.reactivex.Observable
 
@@ -32,4 +33,10 @@ fun <T : Any> Observable<T>.delayResponse(atLeastMillis: Long = 1500): Observabl
         if (delay > 0) Thread.sleep(delay)
         it
     }
+}
+
+inline fun <reified T> Dialog.getTag(key: Int, default: () -> T): T {
+    val v = window!!.decorView
+    val data = v.getTag(key) as? T
+    return data ?: default().apply { v.setTag(key, this) }
 }
