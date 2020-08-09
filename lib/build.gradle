@@ -9,7 +9,7 @@ android {
         //noinspection OldTargetApi
         targetSdkVersion 28
         versionCode 1
-        versionName "2.9.0"
+        versionName "2.9.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "boolean", "INCLUDE_PROGUARD", "true"
     }
