@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             Waterfall.flow {
                 apiSample.subscribeX(context) {
                     Log.i("TAG", "apiSample1")
-                    next()
+                    next()//进入下一个flow，可以带任意类型的数据如：next("DATA")
                 }
             }.flow {
                 apiSample.subscribeX(context) {
@@ -82,15 +82,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     @Suppress("unused")
     private fun subscribeX() {
+        //简单模式，通常都用这个
         api.simple().subscribeX(context) {
             Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
         }
-
+        //构造方法模式，看名字都基本能知道功能了
         api.simple().subscribeXBuilder(context)
-                .failed {
-                    true
-                }.response {
-
+                .progress {
+                    null//null means no default and custom progress
+                }.failed {
+                    true//return error handled or not
+                }.successOnly(true)
+                .response {
+                    Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
                 }
     }
 

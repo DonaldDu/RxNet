@@ -38,7 +38,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
 
-    implementation "com.github.DonaldDu:XIntent:1.5.2"
+    implementation "com.github.DonaldDu:XIntent:1.5.3"
     //noinspection GradleDependency
     implementation 'com.squareup.okhttp3:okhttp:3.14.7'
     testImplementation 'junit:junit:4.13'

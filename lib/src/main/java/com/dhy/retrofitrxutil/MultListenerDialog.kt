@@ -18,7 +18,7 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
     companion object {
         private val progresses: MutableMap<Context, MultListenerDialog> = mutableMapOf()
 
-        fun getInstance(activity: FragmentActivity, observer: IObserverX? = null): StyledProgress {
+        fun getInstance(activity: FragmentActivity, observer: IObserverX? = null): MultListenerDialog {
             val progress = progresses[activity] ?: MultListenerDialog(activity)
             if (observer != null) progress.canceler = WeakReference(observer)
             return progress
@@ -122,8 +122,10 @@ fun <E> Set<E>.iterator(action: (Iterator<E>) -> Unit) {
     while (iterator.hasNext()) action(iterator)
 }
 
-fun FragmentActivity.showProgress() {
-    MultListenerDialog.getInstance(this).showProgress()
+fun FragmentActivity.showProgress(): MultListenerDialog {
+    val dialog = MultListenerDialog.getInstance(this)
+    dialog.showProgress()
+    return dialog
 }
 
 fun FragmentActivity.dismissProgress(delay: Boolean = true) {
