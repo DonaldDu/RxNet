@@ -207,8 +207,12 @@ fun FragmentActivity.dismissProgress(delay: Boolean = true) {
     MultListenerDialog.getInstance(this).dismissProgress(delay)
 }
 ```
+## 引入依赖
+```
+dependencies {
+    implementation 'com.github.DonaldDu:RxNet:x.x.x'//JitPack version
+}
+```
 
-# 其它说明
-这个项目是由以前的[RetrofitRxUtil](https://github.com/SugarAndroid/RetrofitRxUtil)改名的，主要是以前的名字不太容易看懂功能，所以修改为RxNet，意为用RxJava来快捷实现网络请求的工具。
-
-以前的项目不维护，转到新项目了。
+# 最后
+开源不易，写文章更不易，劳烦大家给本文点个赞，可以的话，再给个star，感激不尽
