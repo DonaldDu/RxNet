@@ -90,7 +90,7 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
 
     override fun dismissProgress(delay: Boolean) {
         if (delay) delayProgress.onDismiss()
-        else dismiss()
+        else delayProgress.runnable.run()
     }
 
     private inner class DelayProgress {
@@ -99,8 +99,8 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
             get() {
                 return dialog?.window?.decorView
             }
-        private val runnable = Runnable {
-            if (dialog?.isShowing == true) dismiss()
+        internal val runnable = Runnable {
+            if (dialog?.isShowing == true) dismissAllowingStateLoss()
         }
 
         fun onShow() {
