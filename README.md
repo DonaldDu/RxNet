@@ -1,4 +1,4 @@
-# RxNet [![](https://jitpack.io/v/DonaldDu/RxNet.svg)](https://jitpack.io/#DonaldDu/RxNet)
+# RxNet [![](https://jitpack.io/v/DonaldDu/RxNet.svg)](https://jitpack.io/#DonaldDu/RxNet) [JitPack](https://jitpack.io/#DonaldDu/RxNet)
 # Android里面网络请求一般怎么写？
 
 ## Kotlin协程
@@ -207,7 +207,7 @@ fun FragmentActivity.dismissProgress(delay: Boolean = true) {
     MultListenerDialog.getInstance(this).dismissProgress(delay)
 }
 ```
-## 引入依赖
+## 引入依赖 [JitPack](https://jitpack.io/#DonaldDu/RxNet)
 ```
 dependencies {
     implementation 'com.github.DonaldDu:RxNet:x.x.x'//JitPack version
