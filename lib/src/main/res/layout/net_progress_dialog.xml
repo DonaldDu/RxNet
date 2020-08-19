@@ -11,5 +11,6 @@
         android:layout_height="100dp"
         android:layout_gravity="center"
         android:background="@drawable/net_progress_bg"
+        android:indeterminateTint="@color/colorAccent"
         android:padding="15dp" />
 </FrameLayout>

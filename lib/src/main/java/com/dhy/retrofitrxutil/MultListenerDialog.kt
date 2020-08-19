@@ -3,18 +3,17 @@ package com.dhy.retrofitrxutil
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
+import com.dhy.xintent.isDebugable
 import java.lang.ref.WeakReference
 
-class MultListenerDialog(private val fragmentActivity: FragmentActivity) : DialogFragment(), StyledProgress, LifecycleObserver {
+class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialog(fragmentActivity), StyledProgress, LifecycleObserver {
     companion object {
         private val progresses: MutableMap<Context, MultListenerDialog> = mutableMapOf()
 
@@ -25,13 +24,25 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
         }
     }
 
+    private val isDebug = fragmentActivity.isDebugable()
     private var canceler: WeakReference<IObserverX>? = null
-
     private val lifecycleOwner: LifecycleOwner = fragmentActivity
+
+    private val delayProgress = DelayProgress()
+    private val onDismissListeners: MutableSet<DialogInterface.OnDismissListener> = mutableSetOf()
+    private val onCancelListeners: MutableSet<DialogInterface.OnCancelListener> = mutableSetOf()
 
     init {
         progresses[fragmentActivity] = this
         lifecycleOwner.lifecycle.addObserver(this)
+
+        setContentView(R.layout.net_progress_dialog)
+        setCanceledOnTouchOutside(false)
+        window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        setOnCancelListener {
+            canceler?.get()?.cancel()
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -40,16 +51,7 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
         progresses.remove(fragmentActivity)
     }
 
-    private val supportFragmentManager = fragmentActivity.supportFragmentManager
-    private val delayProgress = DelayProgress()
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = AlertDialog.Builder(requireActivity()).setView(R.layout.net_progress_dialog).create()
-        dialog.setCanceledOnTouchOutside(false)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        return dialog
-    }
 
-    private val onDismissListeners: MutableSet<DialogInterface.OnDismissListener> = mutableSetOf()
     fun addOnDismissListener(listener: DialogInterface.OnDismissListener) {
         onDismissListeners.add(listener)
     }
@@ -58,15 +60,11 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
         onDismissListeners.remove(listener)
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        onDismissListeners.iterator {
-            it.next().onDismiss(dialog)
-        }
-        super.onDismiss(dialog)
-        delayProgress.count = 0
+    override fun setOnDismissListener(listener: DialogInterface.OnDismissListener?) {
+        if (listener != null) addOnDismissListener(listener)
+        else if (isDebug) Toast.makeText(context, "use removeOnDismissListener instead", Toast.LENGTH_LONG).show()
     }
 
-    private val onCancelListeners: MutableSet<DialogInterface.OnCancelListener> = mutableSetOf()
     fun addOnCancelListener(listener: DialogInterface.OnCancelListener) {
         onCancelListeners.add(listener)
     }
@@ -75,16 +73,13 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
         onCancelListeners.remove(listener)
     }
 
-    override fun onCancel(dialog: DialogInterface) {
-        canceler?.get()?.cancel()
-        onCancelListeners.iterator {
-            it.next().onCancel(dialog)
-        }
-        super.onCancel(dialog)
+    override fun setOnCancelListener(listener: DialogInterface.OnCancelListener?) {
+        if (listener != null) addOnCancelListener(listener)
+        else if (isDebug) Toast.makeText(context, "use removeOnCancelListener instead", Toast.LENGTH_LONG).show()
     }
 
     override fun showProgress() {
-        if (dialog?.isShowing != true) showNow(supportFragmentManager, javaClass.name)
+        if (!isShowing) show()
         delayProgress.onShow()
     }
 
@@ -97,10 +92,10 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
         internal var count = 0
         private val decorView: View?
             get() {
-                return dialog?.window?.decorView
+                return window?.decorView
             }
         internal val runnable = Runnable {
-            if (dialog?.isShowing == true) dismissAllowingStateLoss()
+            if (isShowing) dismiss()
         }
 
         fun onShow() {

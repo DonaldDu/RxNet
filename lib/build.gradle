@@ -9,7 +9,7 @@ android {
         //noinspection OldTargetApi
         targetSdkVersion 28
         versionCode 1
-        versionName "2.9.2"
+        versionName "2.9.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "boolean", "INCLUDE_PROGUARD", "true"
     }
@@ -39,9 +39,12 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
     implementation "androidx.fragment:fragment:1.2.5"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+
+    implementation "com.github.DonaldDu:XIntent:1.5.3"
     api 'io.reactivex.rxjava3:rxandroid:3.0.0'
     api 'com.squareup.retrofit2:retrofit:2.9.0'
+
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
