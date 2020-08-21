@@ -3,6 +3,8 @@ package com.dhy.retrofitrxutil
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.DialogInterface.OnCancelListener
+import android.content.DialogInterface.OnDismissListener
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
@@ -29,8 +31,14 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
     private val lifecycleOwner: LifecycleOwner = fragmentActivity
 
     private val delayProgress = DelayProgress()
-    private val onDismissListeners: MutableSet<DialogInterface.OnDismissListener> = mutableSetOf()
-    private val onCancelListeners: MutableSet<DialogInterface.OnCancelListener> = mutableSetOf()
+    private val onDismissListeners: MutableSet<OnDismissListener> = mutableSetOf()
+    private val onCancelListeners: MutableSet<OnCancelListener> = mutableSetOf()
+    private val onDismissListener = OnDismissListener {
+        onDismissListeners.iterator { it.onDismiss(this) }
+    }
+    private val onCancelListener = OnCancelListener {
+        onCancelListeners.iterator { it.onCancel(this) }
+    }
 
     init {
         progresses[fragmentActivity] = this
@@ -40,9 +48,13 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
         setCanceledOnTouchOutside(false)
         window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        setOnCancelListener {
-            canceler?.get()?.cancel()
-        }
+        addOnCancelListener(object : OnCancelListener {
+            override fun onCancel(dialog: DialogInterface?) {
+                canceler?.get()?.cancel()
+            }
+        })
+        super.setOnCancelListener(onCancelListener)
+        super.setOnDismissListener(onDismissListener)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -51,29 +63,46 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
         progresses.remove(fragmentActivity)
     }
 
-
-    fun addOnDismissListener(listener: DialogInterface.OnDismissListener) {
+    fun addOnDismissListener(listener: OnDismissListener) {
         onDismissListeners.add(listener)
     }
 
-    fun removeOnDismissListener(listener: DialogInterface.OnDismissListener) {
-        onDismissListeners.remove(listener)
+    /**
+     * callback only one time
+     * */
+    fun addOnDismissListenerOnce(listener: OnDismissListener) {
+        onDismissListeners.add(OnDismissListenerOnce(listener))
     }
 
-    override fun setOnDismissListener(listener: DialogInterface.OnDismissListener?) {
+    fun removeOnDismissListener(listener: OnDismissListener) {
+        onDismissListeners.removeAll {
+            it == listener || (it is OnDismissListenerOnce && it.listener == listener)
+        }
+    }
+
+    override fun setOnDismissListener(listener: OnDismissListener?) {
         if (listener != null) addOnDismissListener(listener)
         else if (isDebug) Toast.makeText(context, "use removeOnDismissListener instead", Toast.LENGTH_LONG).show()
     }
 
-    fun addOnCancelListener(listener: DialogInterface.OnCancelListener) {
+    fun addOnCancelListener(listener: OnCancelListener) {
         onCancelListeners.add(listener)
     }
 
-    fun removeOnCancelListener(listener: DialogInterface.OnCancelListener) {
-        onCancelListeners.remove(listener)
+    /**
+     * callback only one time
+     * */
+    fun addOnCancelListenerOnce(listener: OnCancelListener) {
+        onCancelListeners.add(OnCancelListenerOnce(listener))
     }
 
-    override fun setOnCancelListener(listener: DialogInterface.OnCancelListener?) {
+    fun removeOnCancelListener(listener: OnCancelListener) {
+        onCancelListeners.removeAll {
+            it == listener || (it is OnCancelListenerOnce && it.listener == listener)
+        }
+    }
+
+    override fun setOnCancelListener(listener: OnCancelListener?) {
         if (listener != null) addOnCancelListener(listener)
         else if (isDebug) Toast.makeText(context, "use removeOnCancelListener instead", Toast.LENGTH_LONG).show()
     }
@@ -89,12 +118,12 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
     }
 
     private inner class DelayProgress {
-        internal var count = 0
+        var count = 0
         private val decorView: View?
             get() {
                 return window?.decorView
             }
-        internal val runnable = Runnable {
+        val runnable = Runnable {
             if (isShowing) dismiss()
         }
 
@@ -110,11 +139,28 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
             }
         }
     }
-}
 
-fun <E> Set<E>.iterator(action: (Iterator<E>) -> Unit) {
-    val iterator = iterator()
-    while (iterator.hasNext()) action(iterator)
+    private fun <E> MutableSet<E>.iterator(action: (E) -> Unit) {
+        val iterator = iterator()
+        while (iterator.hasNext()) {
+            val e = iterator.next()
+            if (e is ListenerOnce) iterator.remove()
+            action(e)
+        }
+    }
+
+    private interface ListenerOnce
+    private class OnDismissListenerOnce(val listener: OnDismissListener) : OnDismissListener, ListenerOnce {
+        override fun onDismiss(dialog: DialogInterface?) {
+            listener.onDismiss(dialog)
+        }
+    }
+
+    private class OnCancelListenerOnce(val listener: OnCancelListener) : OnCancelListener, ListenerOnce {
+        override fun onCancel(dialog: DialogInterface?) {
+            listener.onCancel(dialog)
+        }
+    }
 }
 
 fun FragmentActivity.showProgress(): MultListenerDialog {
