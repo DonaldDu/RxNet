@@ -48,11 +48,7 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
         setCanceledOnTouchOutside(false)
         window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        addOnCancelListener(object : OnCancelListener {
-            override fun onCancel(dialog: DialogInterface?) {
-                canceler?.get()?.cancel()
-            }
-        })
+        addOnCancelListener { canceler?.get()?.cancel() }
         super.setOnCancelListener(onCancelListener)
         super.setOnDismissListener(onDismissListener)
     }
@@ -90,10 +86,11 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
     }
 
     /**
-     * callback only one time
+     * callback only one time, auto remove on dismiss
      * */
     fun addOnCancelListenerOnce(listener: OnCancelListener) {
         onCancelListeners.add(OnCancelListenerOnce(listener))
+        addOnDismissListenerOnce { removeOnCancelListener(listener) }
     }
 
     fun removeOnCancelListener(listener: OnCancelListener) {
