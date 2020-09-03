@@ -115,7 +115,6 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
     }
 
     private inner class DelayProgress {
-        var count = 0
         private val decorView: View?
             get() {
                 return window?.decorView
@@ -125,15 +124,11 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
         }
 
         fun onShow() {
-            count++
             decorView?.removeCallbacks(runnable)
         }
 
         fun onDismiss() {
-            if (count > 0) count--
-            if (count == 0) {
-                decorView?.postDelayed(runnable, 100)
-            }
+            decorView?.postDelayed(runnable, 100)
         }
     }
 
