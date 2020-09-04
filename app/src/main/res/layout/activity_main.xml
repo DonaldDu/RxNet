@@ -39,6 +39,12 @@
         android:text="multiple request" />
 
     <Button
+        android:id="@+id/btParalleleReq"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="parallel request" />
+
+    <Button
         android:id="@+id/buttonFinish"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

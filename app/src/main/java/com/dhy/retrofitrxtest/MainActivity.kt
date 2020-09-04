@@ -7,9 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.dhy.retrofitrxutil.delayResponse
-import com.dhy.retrofitrxutil.subscribeX
-import com.dhy.retrofitrxutil.subscribeXBuilder
+import com.dhy.retrofitrxutil.*
 import com.dhy.xintent.Waterfall
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.OkHttpClient
@@ -31,29 +29,46 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         for (i in 0 until root.childCount) {
             root.getChildAt(i).setOnClickListener(this)
         }
-        val apiSample = api.simple()
         buttonMultReq.setOnClickListener {
+            //串行请求，最后一个结束的关闭进度框，中间不闪烁
             Waterfall.flow {
-                apiSample.subscribeX(context) {
+                api.simple().subscribeX(context) {
                     Log.i("TAG", "apiSample1")
                     next()//进入下一个flow，可以带任意类型的数据如：next("DATA")
                 }
             }.flow {
-                apiSample.subscribeX(context) {
+                api.simple().subscribeX(context) {
                     Log.i("TAG", "apiSample2")
                     next()
                 }
             }.flow {
-                apiSample.subscribeX(context) {
+                api.simple().subscribeX(context) {
                     Log.i("TAG", "apiSample3")
                     Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
-        buttonFinish.setOnClickListener {
-            apiSample.subscribeX(context) {
-                Log.i("TAG", "apiSample")
+
+        btParalleleReq.setOnClickListener {
+            //并发请求，最后一个结束的关闭进度框
+            api.simple().subscribeX(context) {
+                Log.i("TAG", "apiSample1")
+                Toast.makeText(context, "response1:" + it.message, Toast.LENGTH_SHORT).show()
             }
+            buttonDelay.performClick()
+        }
+
+        buttonFinish.setOnClickListener {
+            showProgress()
+            api.simple().subscribeX(context) {
+                dismissProgress()
+                Log.i("TAG", "api.simple()")
+            }
+            api.simple().subscribeX(context) { }
+            api.simple().subscribeX(context) { }
+            api.simple().subscribeX(context) { }
+            api.simple().subscribeX(context) { }
+            api.simple().subscribeX(context) { }
             buttonFinish.postDelayed({
                 finish()
             }, 500)
@@ -61,10 +76,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         buttonDelay.setOnClickListener {
             val start = System.currentTimeMillis()
-            apiSample.delayResponse(5000)
+            api.simple().delayResponse(3000)
                     .subscribeX(context) {
                         val cost = System.currentTimeMillis() - start
-                        Log.i("TAG", "apiSample cost $cost")
+                        Log.i("TAG", "api.simple() cost $cost")
+                        Toast.makeText(context, "delayResponse cost $cost", Toast.LENGTH_SHORT).show()
                     }
         }
     }

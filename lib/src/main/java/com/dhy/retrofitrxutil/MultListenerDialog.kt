@@ -1,5 +1,6 @@
 package com.dhy.retrofitrxutil
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
@@ -7,29 +8,25 @@ import android.content.DialogInterface.OnCancelListener
 import android.content.DialogInterface.OnDismissListener
 import android.view.View
 import android.widget.Toast
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
 import com.dhy.xintent.isDebugable
-import java.lang.ref.WeakReference
 
-class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialog(fragmentActivity), StyledProgress, LifecycleObserver {
+class MultListenerDialog(activity: Activity) : Dialog(activity), StyledProgress {
     companion object {
         private val progresses: MutableMap<Context, MultListenerDialog> = mutableMapOf()
 
-        fun getInstance(activity: FragmentActivity, observer: IObserverX? = null): MultListenerDialog {
-            val progress = progresses[activity] ?: MultListenerDialog(activity)
-            if (observer != null) progress.canceler = WeakReference(observer)
-            return progress
+        fun getInstance(activity: Activity): MultListenerDialog {
+            WatchActivity.init(activity)
+            return progresses[activity] ?: MultListenerDialog(activity)
+        }
+
+        internal fun onActivityDestroyed(activity: Activity) {
+            val dialog = progresses.remove(activity)
+            if (dialog?.isShowing == true) dialog.cancel()
         }
     }
 
-    private val isDebug = fragmentActivity.isDebugable()
-    private var canceler: WeakReference<IObserverX>? = null
-    private val lifecycleOwner: LifecycleOwner = fragmentActivity
-
+    internal val requests: MutableMap<IObserverX, Any?> = mutableMapOf()
+    private val isDebug = activity.isDebugable()
     private val delayProgress = DelayProgress()
     private val onDismissListeners: MutableSet<OnDismissListener> = mutableSetOf()
     private val onCancelListeners: MutableSet<OnCancelListener> = mutableSetOf()
@@ -41,22 +38,21 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
     }
 
     init {
-        progresses[fragmentActivity] = this
-        lifecycleOwner.lifecycle.addObserver(this)
-
+        progresses[activity] = this
         setContentView(R.layout.net_progress_dialog)
         setCanceledOnTouchOutside(false)
         window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        addOnCancelListener { canceler?.get()?.cancel() }
+        addOnCancelListener { cancelAllRequests() }
         super.setOnCancelListener(onCancelListener)
         super.setOnDismissListener(onDismissListener)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    private fun onActivityDestroy() {
-        lifecycleOwner.lifecycle.removeObserver(this)
-        progresses.remove(fragmentActivity)
+    private fun cancelAllRequests() {
+        ArrayList(requests.keys).forEach {
+            it.cancel()
+        }
+        requests.clear()
     }
 
     fun addOnDismissListener(listener: OnDismissListener) {
@@ -110,8 +106,7 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
     }
 
     override fun dismissProgress(delay: Boolean) {
-        if (delay) delayProgress.onDismiss()
-        else delayProgress.runnable.run()
+        delayProgress.onDismiss(delay)
     }
 
     private inner class DelayProgress {
@@ -127,8 +122,12 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
             decorView?.removeCallbacks(runnable)
         }
 
-        fun onDismiss() {
-            decorView?.postDelayed(runnable, 100)
+        fun onDismiss(delay: Boolean) {
+            if (delay) decorView?.postDelayed(runnable, 100)
+            else {
+                decorView?.removeCallbacks(runnable)
+                runnable.run()
+            }
         }
     }
 
@@ -155,12 +154,25 @@ class MultListenerDialog(private val fragmentActivity: FragmentActivity) : Dialo
     }
 }
 
-fun FragmentActivity.showProgress(): MultListenerDialog {
+class StyledProgressHolder(private val dialog: MultListenerDialog, private val observer: IObserverX) : StyledProgress {
+    private val requests = dialog.requests
+    override fun showProgress() {
+        requests[observer] = null//add in
+        dialog.showProgress()
+    }
+
+    override fun dismissProgress(delay: Boolean) {
+        requests.remove(observer)
+        if (requests.isEmpty()) dialog.dismissProgress(delay)
+    }
+}
+
+fun Activity.showProgress(): MultListenerDialog {
     val dialog = MultListenerDialog.getInstance(this)
     dialog.showProgress()
     return dialog
 }
 
-fun FragmentActivity.dismissProgress(delay: Boolean = true) {
+fun Activity.dismissProgress(delay: Boolean = true) {
     MultListenerDialog.getInstance(this).dismissProgress(delay)
 }

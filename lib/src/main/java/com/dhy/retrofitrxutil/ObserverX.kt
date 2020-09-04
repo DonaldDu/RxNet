@@ -2,16 +2,11 @@ package com.dhy.retrofitrxutil
 
 import android.app.Activity
 import android.content.Context
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.disposables.Disposable
 
-abstract class ObserverX<T>(final override val context: Context, private val successOnly: Boolean = true) : Observer<T>, IObserverX, LifecycleObserver {
+abstract class ObserverX<T>(final override val context: Context, private val successOnly: Boolean = true) : Observer<T>, IObserverX {
     private var disposable: Disposable? = null
-    private var lifecycleOwner: LifecycleOwner? = context as? LifecycleOwner
     private val progress: StyledProgress? by lazy {
         getStyledProgress()
     }
@@ -27,22 +22,22 @@ abstract class ObserverX<T>(final override val context: Context, private val suc
 
     override fun onSubscribe(disposable: Disposable) {
         this.disposable = disposable
-        progress?.showProgress()
-        lifecycleOwner?.lifecycle?.addObserver(this)
+        showProgress()
+        if (context is Activity) requests[this] = context
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    private fun onDestroy() {
+    internal fun onDestroy() {
+        cancel()
         dismissProgress(false)
         removeObserver()
-        cancel()
     }
 
     private fun removeObserver() {
-        lifecycleOwner?.lifecycle?.removeObserver(this)
+        if (context is Activity) requests.remove(this)
     }
 
     override fun onNext(t: T) {
+        dismissProgress(true)
         removeObserver()
         if (successOnly && t is IResponseStatus) {
             val status = t as IResponseStatus
@@ -65,16 +60,16 @@ abstract class ObserverX<T>(final override val context: Context, private val suc
         get() = defaultErrorHandler!!
 
     override fun onError(e: Throwable) {
+        dismissProgress(false)
         removeObserver()
         errorHandler.onError(this, e)
     }
 
     override fun onComplete() {
-        cancel()
-        dismissProgress()
+        disposable = null
     }
 
-    fun showProgress() {
+    private fun showProgress() {
         if (!isFinishing()) progress?.showProgress()
     }
 
@@ -91,12 +86,24 @@ abstract class ObserverX<T>(final override val context: Context, private val suc
         disposable?.dispose()
     }
 
+    override fun isCanceled(): Boolean {
+        return disposable == null || disposable?.isDisposed == true
+    }
+
     companion object {
+        private val requests: MutableMap<ObserverX<*>, Activity> = mutableMapOf()
+        internal fun onActivityDestroyed(activity: Activity) {
+            ArrayList(requests.keys).forEach {
+                val v = requests[it]
+                if (v == activity) it.onDestroy()
+            }
+        }
+
         private var defaultErrorHandler: IErrorHandler? = null
         private var defaultStyledProgressGenerator: StyledProgressGenerator? = null
 
         @JvmStatic
-        @Deprecated("use setErrorHandler", replaceWith = ReplaceWith("setErrorHandler(handler)"))
+        @Deprecated("use setErrorHandler", replaceWith = ReplaceWith("ObserverX.setErrorHandler(handler)"))
         fun setDefaultErrorHandler(handler: IErrorHandler?) {
             defaultErrorHandler = handler
         }
@@ -107,7 +114,7 @@ abstract class ObserverX<T>(final override val context: Context, private val suc
         }
 
         @JvmStatic
-        @Deprecated("use setProgressGenerator", replaceWith = ReplaceWith("setProgressGenerator(generator)"))
+        @Deprecated("use setProgressGenerator", replaceWith = ReplaceWith("ObserverX.setProgressGenerator(generator)"))
         fun setDefaultStyledProgressGenerator(generator: StyledProgressGenerator?) {
             defaultStyledProgressGenerator = generator
         }
