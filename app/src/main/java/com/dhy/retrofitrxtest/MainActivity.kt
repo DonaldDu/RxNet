@@ -9,14 +9,21 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.dhy.retrofitrxutil.*
 import com.dhy.xintent.Waterfall
+import com.dhy.xintent.toast
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.coroutines.CoroutineContext
 
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : AppCompatActivity(), View.OnClickListener, CoroutineScope {
+    private lateinit var job: Job
     private lateinit var context: Context
     private lateinit var api: API
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,6 +90,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         Toast.makeText(context, "delayResponse cost $cost", Toast.LENGTH_SHORT).show()
                     }
         }
+        job = Job()
+        btCoroutinesTest.setOnClickListener {
+            launch {
+                showProgress()
+                val result = api.coroutinesTest()
+                dismissProgress()
+                toast("message " + result.message)
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 
     private fun initApi() {
@@ -137,4 +158,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
         }
     }
+
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
 }

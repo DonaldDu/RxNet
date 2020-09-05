@@ -55,4 +55,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="delay response" />
+    <Button
+        android:id="@+id/btCoroutinesTest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="coroutines Test" />
 </LinearLayout>

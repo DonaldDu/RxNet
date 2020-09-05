@@ -15,4 +15,7 @@ interface API {
 
     @GET("authorizeFailed")
     fun authorizeFailed(): Observable<ResponsePacket<String>>
+
+    @GET("Simple?net=1&bz=1")
+    suspend fun coroutinesTest(): ResponsePacket<String>
 }
