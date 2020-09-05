@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         api.simple().subscribeX(context) {
             Toast.makeText(context, "response:" + it.message, Toast.LENGTH_SHORT).show()
         }
-        //构造方法模式，看名字都基本能知道功能了
+        //构造器模式，看名字都基本能知道功能了
         api.simple().subscribeXBuilder(context)
                 .progress {
                     null//null means no default and custom progress
