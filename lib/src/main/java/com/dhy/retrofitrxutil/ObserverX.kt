@@ -7,9 +7,7 @@ import io.reactivex.rxjava3.disposables.Disposable
 
 abstract class ObserverX<T>(final override val context: Context, private val successOnly: Boolean = true) : Observer<T>, IObserverX {
     private var disposable: Disposable? = null
-    private val progress: StyledProgress? by lazy {
-        getStyledProgress()
-    }
+    private val progress by lazy { getStyledProgress() }
 
     /**
      * Override this for custom progress
@@ -28,8 +26,6 @@ abstract class ObserverX<T>(final override val context: Context, private val suc
 
     internal fun onDestroy() {
         cancel()
-        dismissProgress(false)
-        removeObserver()
     }
 
     private fun removeObserver() {
@@ -38,7 +34,6 @@ abstract class ObserverX<T>(final override val context: Context, private val suc
 
     override fun onNext(t: T) {
         dismissProgress(true)
-        removeObserver()
         if (successOnly && t is IResponseStatus) {
             val status = t as IResponseStatus
             if (status.isSuccess) {
@@ -59,9 +54,12 @@ abstract class ObserverX<T>(final override val context: Context, private val suc
     protected open val errorHandler: IErrorHandler
         get() = defaultErrorHandler!!
 
-    override fun onError(e: Throwable) {
+    final override fun onError(e: Throwable) {
         dismissProgress(false)
-        removeObserver()
+        onErrorResponse(e)
+    }
+
+    open fun onErrorResponse(e: Throwable) {
         errorHandler.onError(this, e)
     }
 
@@ -79,11 +77,13 @@ abstract class ObserverX<T>(final override val context: Context, private val suc
 
     override fun dismissProgress(delay: Boolean) {
         progress?.dismissProgress(delay)
+        removeObserver()
     }
 
     protected abstract fun onResponse(response: T)
     override fun cancel() {
         disposable?.dispose()
+        dismissProgress(false)
     }
 
     override fun isCanceled(): Boolean {
